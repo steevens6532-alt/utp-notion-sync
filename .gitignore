@@ -1,0 +1,52 @@
+.env
+credentials.json
+google_token.json
+
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# =========================
+# ENVIRONMENT VARIABLES
+# =========================
+
+.env
+
+
+# =========================
+# GOOGLE OAUTH / SECRETS
+# =========================
+
+secrets/credentials.json
+secrets/google_token.json
+secrets/*
+!secrets/.gitkeep
+
+# =========================
+# PYTHON
+# =========================
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+.venv/
+venv/
+
+
+# =========================
+# IDE
+# =========================
+
+.vscode/
+.idea/
+
+
+# =========================
+# OS
+# =========================
+
+.DS_Store
+Thumbs.db
