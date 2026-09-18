@@ -113,27 +113,27 @@ Ejemplo:
 ---------------
 UTP+CLASS
 ---------------
-
+```
 UTP_TOKEN=your_utp_access_token
 UTP_USER_ID=your_utp_user_id
 UTP_TENANT_ID=your_utp_tenant_id
-
+```
 
 ---------------
 NOTION
 ---------------
-
+```
 NOTION_TOKEN=your_notion_integration_token
 NOTION_DATABASE_ID=your_notion_database_id
-
+```
 
 ---------------
 GOOGLE CALENDAR
 ---------------
-
-
+```
 GOOGLE_CALENDAR_ID=your_google_calendar_id
 Nunca subas tu archivo .env a GitHub.
+```
 
 ## 🟦 Configuración de Notion
 Crea una base de datos con las siguientes propiedades:
