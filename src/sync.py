@@ -1,14 +1,11 @@
 import os
 import uuid
-from datetime import datetime, timedelta
+
 from pathlib import Path
+from datetime import datetime, timedelta
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-ENV_FILE = BASE_DIR / ".env"
-GOOGLE_CREDENTIALS_FILE = BASE_DIR / "secrets" / "credentials.json"
-GOOGLE_TOKEN_FILE = BASE_DIR / "secrets" / "google_token.json"
 import requests
+
 from dotenv import load_dotenv
 
 from google.auth.transport.requests import Request
@@ -18,10 +15,34 @@ from googleapiclient.discovery import build
 
 
 # ============================================================
+# RUTAS DEL PROYECTO
+# ============================================================
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+ENV_FILE = BASE_DIR / "config" / ".env"
+
+GOOGLE_CREDENTIALS_FILE = (
+    BASE_DIR
+    / "secrets"
+    / "credentials.json"
+)
+
+GOOGLE_TOKEN_FILE = (
+    BASE_DIR
+    / "secrets"
+    / "google_token.json"
+)
+
+
+# ============================================================
 # CARGAR .ENV
 # ============================================================
 
-load_dotenv(ENV_FILE)
+load_dotenv(
+    dotenv_path=ENV_FILE,
+    override=True
+)
 
 
 # ============================================================
@@ -35,7 +56,9 @@ UTP_TENANT_ID = os.getenv("UTP_TENANT_ID")
 NOTION_TOKEN = os.getenv("NOTION_TOKEN")
 NOTION_DATABASE_ID = os.getenv("NOTION_DATABASE_ID")
 
-GOOGLE_CALENDAR_ID = os.getenv("GOOGLE_CALENDAR_ID")
+GOOGLE_CALENDAR_ID = os.getenv(
+    "GOOGLE_CALENDAR_ID"
+)
 
 
 # ============================================================
