@@ -53,10 +53,13 @@ El proyecto obtiene tareas, evaluaciones y otras actividades desde UTP+Class, el
        Estados                Deadlines
        Cursos                 Recordatorios
        Fechas                 Actualizaciones
-
 ```
 
+---
+
 ## 📂 Estructura del proyecto
+
+```text
 utp-sync/
 │
 ├── src/
@@ -71,117 +74,201 @@ utp-sync/
 ├── requirements.txt
 ├── README.md
 └── LICENSE
+```
+
 Los archivos sensibles no deben subirse al repositorio.
 
+---
+
 ## ⚙️ Requisitos
+
 - Python 3.10 o superior
 - Cuenta de UTP+Class
 - Cuenta de Notion
 - Cuenta de Google
 - Google Calendar API habilitada
 - Integración de Notion creada
+
+---
+
 ## 📦 Instalación
 
 Clona el repositorio:
+
+```bash
 git clone https://github.com/TU_USUARIO/utp-sync.git
 cd utp-sync
+```
+
 Crea un entorno virtual.
-Windows
+
+### Windows
+
+```bash
 python -m venv .venv
 .venv\Scripts\activate
-Linux / macOS
+```
+
+### Linux / macOS
+
+```bash
 python3 -m venv .venv
 source .venv/bin/activate
+```
+
 Instala las dependencias:
+
+```bash
 pip install -r requirements.txt
+```
+
+---
 
 ## 📚 Dependencias
-El archivo requirements.txt debe incluir:
+
+El archivo `requirements.txt` debe incluir:
+
+```txt
 requests
 python-dotenv
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
+```
+
+---
 
 ## 🔐 Variables de entorno
+
 Copia:
+
+```text
 .env.example
-como:
-.env
-y completa tus credenciales.
-Ejemplo:
----------------
-UTP+CLASS
----------------
 ```
+
+como:
+
+```text
+.env
+```
+
+y completa tus credenciales.
+
+### UTP+Class
+
+```env
 UTP_TOKEN=your_utp_access_token
 UTP_USER_ID=your_utp_user_id
 UTP_TENANT_ID=your_utp_tenant_id
 ```
 
----------------
-NOTION
----------------
-```
+### Notion
+
+```env
 NOTION_TOKEN=your_notion_integration_token
 NOTION_DATABASE_ID=your_notion_database_id
 ```
 
----------------
-GOOGLE CALENDAR
----------------
-```
+### Google Calendar
+
+```env
 GOOGLE_CALENDAR_ID=your_google_calendar_id
-Nunca subas tu archivo .env a GitHub.
 ```
+
+> ⚠️ Nunca subas tu archivo `.env` a GitHub.
+
+---
 
 ## 🟦 Configuración de Notion
+
 Crea una base de datos con las siguientes propiedades:
-Propiedad	Tipo
-Actividad	Title
-Curso	Select
-Entrega	Date
-Estado	Status
-Tipo	Select
-Semana	Number
-UTP ID	Text
-Estado UTP	Text
-Course ID	Text
 
+| Propiedad | Tipo |
+|---|---|
+| Actividad | Title |
+| Curso | Select |
+| Entrega | Date |
+| Estado | Status |
+| Tipo | Select |
+| Semana | Number |
+| UTP ID | Text |
+| Estado UTP | Text |
+| Course ID | Text |
 
-## Estados recomendados:
+### Estados recomendados
+
+```text
 Por Hacer
 Completada
 Vencida
+```
+
 Después conecta la integración de Notion a esa base de datos.
-📅 Configuración de Google Calendar
+
+---
+
+## 📅 Configuración de Google Calendar
+
 Crea un proyecto en Google Cloud y habilita:
+
+```text
 Google Calendar API
+```
+
 Crea un OAuth Client de tipo:
+
+```text
 Desktop App
+```
+
 Descarga el archivo de credenciales y guárdalo localmente como:
+
+```text
 secrets/credentials.json
+```
+
 En la primera ejecución se abrirá el navegador para autorizar tu cuenta.
+
 Después se generará:
+
+```text
 secrets/google_token.json
+```
+
 Ambos archivos deben permanecer fuera del repositorio.
 
+---
+
 ## ▶️ Ejecución
+
 Desde la raíz del proyecto:
+
+```bash
 python src/sync.py
-🧪 Modo DRY RUN
+```
+
+---
+
+## 🧪 Modo DRY RUN
+
 El proyecto incluye un modo de prueba:
+
+```python
 DRY_RUN = True
+```
+
 Cuando está activado:
+
+```text
 UTP+Class → se consulta normalmente
 Notion → no se modifica
 Google Calendar → no se modifica
+```
+
 Ejemplo:
 
----------------
- UTP → NOTION + GOOGLE CALENDAR 
----------------
-
+```text
+===== UTP → NOTION + GOOGLE CALENDAR =====
 
 🧪 MODO PRUEBA ACTIVADO
 
@@ -207,58 +294,133 @@ Google Calendar
 ⏭️ Sin cambios: 41
 
 ❌ Errores: 0
+```
+
 Para realizar cambios reales:
+
+```python
 DRY_RUN = False
-🧠 Lógica de estados
+```
+
+---
+
+## 🧠 Lógica de estados
+
 El estado de cada actividad se calcula automáticamente.
-Actividad entregada
+
+### Actividad entregada
+
+```text
 UTP studentStatus = DELIVERED
+```
+
 se convierte en:
+
+```text
 Completada
-Actividad pendiente y vencida
+```
+
+### Actividad pendiente y vencida
+
+```text
 Fecha de entrega < fecha actual
+```
+
 se convierte en:
+
+```text
 Vencida
-Actividad futura
+```
+
+### Actividad futura
+
+```text
 Fecha de entrega > fecha actual
+```
+
 se convierte en:
+
+```text
 Por Hacer
+```
+
+---
 
 ## 📅 Filtro de Google Calendar
-Por defecto se pueden sincronizar solo actividades relevantes:
+
+Por defecto se sincronizan únicamente actividades relevantes:
+
+```python
 CALENDAR_TYPES = {
     "HOMEWORK",
     "EVALUATION",
 }
+```
+
 Así Notion puede conservar todas las actividades, mientras Google Calendar muestra únicamente tareas y evaluaciones con fechas límite.
 
+---
+
 ## 🔁 Prevención de duplicados
+
 Cada actividad de UTP+Class posee un identificador único:
+
+```text
 activityId
+```
+
 Ese ID se guarda en Notion como:
+
+```text
 UTP ID
+```
+
 y en Google Calendar como una propiedad privada:
+
+```text
 utp_id
+```
+
 Esto permite determinar si una actividad:
-no existe → CREATE
 
-ya existe y cambió → UPDATE
+```text
+No existe                → CREATE
+Existe pero cambió       → UPDATE
+Existe y no cambió       → SKIP
+```
 
-ya existe y no cambió → SKIP
+De esta forma, la sincronización puede ejecutarse varias veces sin crear actividades duplicadas.
+
+---
 
 ## 🔔 Recordatorios
+
 Los eventos creados en Google Calendar incluyen recordatorios configurables.
+
 Actualmente:
+
+```text
 24 horas antes
 2 horas antes
-Estos valores se pueden modificar en sync.py.
+```
+
+Estos valores se pueden modificar en `sync.py`.
+
+---
 
 ## 🔒 Seguridad
+
 Nunca subas los siguientes archivos:
+
+```text
 .env
 secrets/credentials.json
 secrets/google_token.json
-Ejemplo de .gitignore:
+```
+
+Ejemplo de `.gitignore`:
+
+```gitignore
 .env
 
 secrets/*
@@ -275,35 +437,50 @@ venv/
 
 .DS_Store
 Thumbs.db
+```
+
 Si una credencial fue publicada accidentalmente, debe considerarse comprometida y ser reemplazada.
 
+---
+
 ## ⚠️ Limitaciones
+
 UTP+Class no dispone, hasta donde se ha identificado públicamente, de una API oficial documentada para desarrolladores externos.
+
 Este proyecto utiliza endpoints utilizados por la propia aplicación web de UTP+Class.
+
 Por esta razón:
+
 - cambios internos en UTP+Class pueden romper la integración;
 - los tokens de autenticación pueden expirar;
 - actualmente puede ser necesario renovar manualmente el token de UTP;
 - el proyecto no solicita ni almacena la contraseña del usuario.
 
+---
+
 ## 🚧 Roadmap
+
 Posibles mejoras futuras:
-- Renovación automática del token UTP.
-- Ejecución automática en VPS.
-- Multiusuario.
-- OAuth para múltiples cuentas Google.
-- Integración OAuth con Notion.
-- Interfaz web.
-- Dashboard de sincronización.
-- Configuración personalizada por usuario.
-- Notificaciones de nuevas actividades.
-- Sincronización de clases con Google Calendar.
-- Extensión de navegador para UTP+Class.
-- Dockerización.
-- Logs persistentes.
-- Tests automatizados.
+
+- [ ] Renovación automática del token UTP.
+- [ ] Ejecución automática en VPS.
+- [ ] Multiusuario.
+- [ ] OAuth para múltiples cuentas Google.
+- [ ] Integración OAuth con Notion.
+- [ ] Interfaz web.
+- [ ] Dashboard de sincronización.
+- [ ] Configuración personalizada por usuario.
+- [ ] Notificaciones de nuevas actividades.
+- [ ] Sincronización de clases con Google Calendar.
+- [ ] Extensión de navegador para UTP+Class.
+- [ ] Dockerización.
+- [ ] Logs persistentes.
+- [ ] Tests automatizados.
+
+---
 
 ## 🛠️ Tecnologías utilizadas
+
 - Python
 - REST APIs
 - OAuth 2.0
@@ -312,10 +489,16 @@ Posibles mejoras futuras:
 - Notion API
 - Requests
 - python-dotenv
-  
+
+---
+
 ## 🎯 Objetivo del proyecto
+
 El objetivo es evitar que un estudiante tenga que copiar manualmente las tareas publicadas en UTP+Class hacia sus herramientas personales de organización.
+
 El flujo esperado es:
+
+```text
 Profesor publica actividad
         ↓
 UTP+Class
@@ -325,21 +508,42 @@ Python Sync
 Notion + Google Calendar
         ↓
 Actividad disponible automáticamente
+```
+
+---
 
 ## 📌 Disclaimer
+
 Este proyecto:
+
 - no es oficial;
 - no está afiliado a UTP;
 - no representa a la Universidad Tecnológica del Perú;
 - está desarrollado con fines educativos y personales;
 - utiliza únicamente datos correspondientes a la cuenta autenticada por el propio usuario.
+
 El usuario es responsable de utilizar el software de acuerdo con los términos y políticas de las plataformas involucradas.
+
+---
+
 ## 👨‍💻 Autor
-Steevens Vargas
+
+**Steevens Vargas**
+
 Software Engineering Student
-GitHub: @steevens6532-alt
+
+GitHub: [@steevens6532-alt](https://github.com/steevens6532-alt)
+
+---
+
 ## 📄 Licencia
+
 Este proyecto puede distribuirse bajo la licencia MIT.
+
 Consulta el archivo:
+
+```text
 LICENSE
+```
+
 para más información.
